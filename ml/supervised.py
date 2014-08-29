@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from numpy.random import RandomState
 
 
-class Supervised(object):
+class Supervised(metaclass=ABCMeta):
 
     @abstractmethod
     def train(self, features, labels):
