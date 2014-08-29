@@ -17,7 +17,7 @@ class Supervised(object):
         pass
 
     def measure_sse(self, features, labels):
-       """Returns SSE. Uses Hamming distance for nominal attributes,
+        """Returns SSE. Uses Hamming distance for nominal attributes,
         and means for continuous.
         """
         s = 0

@@ -43,7 +43,8 @@ class Matrix(object):
         return not self.is_nominal(col)
 
     def column_mean(self, col):
-        """Returns the mean of known (not '?') values in the specified column."""
+        """Returns the mean of known (not '?') values in
+        the specified column."""
         return np.nanmean(self.data, axis=0)[col]
 
     def column_max(self, col):
