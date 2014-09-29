@@ -1,4 +1,5 @@
 import arff
+import copy
 import numpy as np
 
 from scipy import stats
@@ -60,13 +61,36 @@ class Matrix(object):
         vals, counts = stats.mode(self.data, axis=0)
         return vals[0][col]
 
+    def sub_cols(self, start, end):
+        """Returns a new instance of matrix with columns sliced
+        from the given start to end.
+        All data is a shallow copy.
+        TODO: This probably messes up ARFF attributes other than
+        attributes and data. Look into this whenever necessary."""
+        if start < 0:
+            raise IndexError('start needs to be >= 0')
+        m = Matrix(copy.copy(self._arff))
+        m._arff['attributes'] = m.attributes[start:end]
+        m._arff['data'] = m.data[:, start:end]
+        return m
+
+    def sub_rows(self, start, end):
+        """Returns a new instance of matrix with rows sliced
+        from the given start to end.
+        All data is a shallow copy."""
+        if start < 0:
+            raise IndexError('start needs to be >= 0')
+        m = Matrix(copy.copy(self._arff))
+        m._arff['data'] = m.data[start:end]
+        return m
+
 
 def from_arff(filename):
     """Loads a matrix from an ARFF file and returns
     an instance of Matrix."""
     with open(filename) as f:
         arff_data = _from_arff(f)
-        return Matrix(arff)
+        return Matrix(arff_data)
 
 
 def _from_arff(f):

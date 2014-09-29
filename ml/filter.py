@@ -1,8 +1,10 @@
+import copy
+
 from supervised import Supervised
 
 
 class Filter(Supervised):
-    """This class wraps another supervised learner.
+    """Wraps another supervised learner.
     It applies some unsupervised operations to the data before
     presenting it to the learner."""
 
@@ -16,8 +18,25 @@ class Filter(Supervised):
 
     def train(self, features, labels):
         """Trains the supervised learner and the transform."""
-        pass
+        if len(features.data) != len(labels.data):
+            raise ValueError('Unexpected array shape.')
+        if self._filter:
+            matrix = self._train_transform(features)
+            self._learner.train(matrix, labels)
+        else:
+            matrix = self._train_transform(labels)
+            self._learner.train(features, matrix)
 
     def predict(self, inp):
         """Makes a prediction."""
-        pass
+        if self._filter:
+            return self._learner.predict(self._transform.transform(inp))
+        else:
+            return self._transform.untransform(self._learner.predict(inp))
+
+    def _train_transform(self, matrix):
+        self._transform.train(matrix)
+        nmatrix = copy.deepcopy(matrix)
+        for ind, row in enumerate(nmatrix.data):
+            nmatrix.data[ind] = self._transform.transform(row)
+        return nmatrix
