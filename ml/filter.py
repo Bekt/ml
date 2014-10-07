@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 
 from supervised import Supervised
 
@@ -32,11 +33,13 @@ class Filter(Supervised):
         if self._filter:
             return self._learner.predict(self._transform.transform(inp))
         else:
-            return self._transform.untransform(self._learner.predict(inp))
+            res = self._learner.predict(inp)
+            return self._transform.untransform(res)
 
     def _train_transform(self, matrix):
         self._transform.train(matrix)
-        nmatrix = copy.deepcopy(matrix)
-        for ind, row in enumerate(nmatrix.data):
+        nmatrix = copy.deepcopy(self._transform.template)
+        nmatrix.set_data(np.empty((matrix.rows(), nmatrix.cols())))
+        for ind, row in enumerate(matrix.data):
             nmatrix.data[ind] = self._transform.transform(row)
         return nmatrix

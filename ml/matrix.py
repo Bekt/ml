@@ -19,6 +19,10 @@ class Matrix(object):
     def data(self):
         return self._arff['data']
 
+    def set_data(self, arr):
+        assert(type(arr) == np.ndarray)
+        self._arff['data'] = arr
+
     def row(self, ind):
         """Returns the specified row."""
         return self.data[ind]
@@ -111,6 +115,14 @@ def _from_arff(f):
                     row[ind] = np.nan
     res['data'] = np.float_(res['data'])
     return res
+
+
+def empty_matrix(rows, cols):
+    """Creates all-continuous matrix."""
+    arff = {'relation': 'unknown', 'desription': ''}
+    arff['attributes'] = [('attr' + str(ind), 'real') for ind in range(cols)]
+    arff['data'] = np.zeros((rows, cols))
+    return Matrix(arff)
 
 
 def _is_nominal(attr):
